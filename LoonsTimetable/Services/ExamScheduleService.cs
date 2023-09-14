@@ -5,12 +5,12 @@ namespace LoonsTimetable.Services
 
     public interface IExamScheduleService 
     {
-        List<ExamSchedule> GenerateExamSchedule(List<Exam> exams);
+        List<ExamSchedule> GenerateExamSchedule(DateTime examDate, List<Exam> exams);
     }
 
     public class ExamScheduleService : IExamScheduleService
     {
-        public List<ExamSchedule> GenerateExamSchedule(List<Exam> exams)
+        public List<ExamSchedule> GenerateExamSchedule(DateTime examStartDate,List<Exam> exams)
         {
             int currentHall = 1;
             int iteration = 1;
@@ -22,7 +22,7 @@ namespace LoonsTimetable.Services
             foreach (var exam in exams)
             {
              
-                DateTime examDate = DateTime.Now;
+                DateTime examDate = examStartDate;
 
                 int hallNumber = currentHall;
                 

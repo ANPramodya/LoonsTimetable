@@ -102,14 +102,15 @@ namespace LoonsTimetable.Controllers
         // POST: api/ExamSchedules
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ExamSchedule>> GenerateExamScedules([FromBody] List<Exam> exams)
+        public async Task<ActionResult<ExamSchedule>> GenerateExamScedules([FromBody] ExamInput examInput)
         {
-            if (exams == null || exams.Count != 8)
+            if (examInput.Exams == null || examInput.Exams.Count != 8)
             {
                 return Problem("Entity set 'LoonsTimetableContext.ExamSchedule'  is null.");
             }
 
-            var examSchedule = _service.GenerateExamSchedule(exams);
+            DateTime examStartDate = examInput.ExamDate;
+            var examSchedule = _service.GenerateExamSchedule(examStartDate, examInput.Exams);
 
             //var data = new
             //{
