@@ -1,4 +1,5 @@
-﻿using LoonsTimetable.Model;
+﻿using LoonsTimetable.Data;
+using LoonsTimetable.Model;
 
 namespace LoonsTimetable.Services
 {
@@ -6,10 +7,17 @@ namespace LoonsTimetable.Services
     public interface IExamScheduleService 
     {
         List<ExamSchedule> GenerateExamSchedule(DateTime examDate, List<Exam> exams);
+        Task SaveToDB(List<ExamSchedule> schedules);
     }
 
     public class ExamScheduleService : IExamScheduleService
     {
+        private readonly LoonsTimetableContext _context;
+
+        public ExamScheduleService(LoonsTimetableContext context) 
+        {
+            _context = context;
+        }
         public List<ExamSchedule> GenerateExamSchedule(DateTime examStartDate,List<Exam> exams)
         {
             int currentHall = 1;
@@ -41,6 +49,7 @@ namespace LoonsTimetable.Services
                 {
                     ExamId = exam.Id,
                     HallNo = hallNumber,
+                    ExamName = exam.Name,
                     Date = examDate,
                     StartTime = startTime,
                     EndTime = endTime,
@@ -76,6 +85,22 @@ namespace LoonsTimetable.Services
 
             }
             return examSchedules;
+        }
+
+        public async Task SaveToDB(List<ExamSchedule> schedules)
+        {
+            try
+            {
+                foreach (var examSchedule in schedules)
+                {
+                    _context.ExamSchedule.Add(examSchedule);
+                }
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e) 
+            {
+                
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int ExamId { get; set; }
+        public String? ExamName { get; set; }
         public int HallNo { get; set; }
         public DateTime Date { get; set; }
         public TimeSpan StartTime { get; set; }

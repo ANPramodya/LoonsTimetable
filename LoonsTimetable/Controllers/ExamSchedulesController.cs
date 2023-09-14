@@ -55,34 +55,34 @@ namespace LoonsTimetable.Controllers
 
         // PUT: api/ExamSchedules/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutExamSchedule(int id, ExamSchedule examSchedule)
-        {
-            if (id != examSchedule.Id)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutExamSchedule(int id, ExamSchedule examSchedule)
+        //{
+        //    if (id != examSchedule.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(examSchedule).State = EntityState.Modified;
+        //    _context.Entry(examSchedule).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ExamScheduleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ExamScheduleExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         //// POST: api/ExamSchedules
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -110,36 +110,48 @@ namespace LoonsTimetable.Controllers
             }
 
             DateTime examStartDate = examInput.ExamDate;
-            var examSchedule = _service.GenerateExamSchedule(examStartDate, examInput.Exams);
+            var examSchedule =  _service.GenerateExamSchedule(examStartDate, examInput.Exams);
 
-            //var data = new
-            //{
-            //    Message = "It works",
-            //    Status = "OK"
-            //};
+          
 
             return Ok(examSchedule);
         }
 
-        // DELETE: api/ExamSchedules/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteExamSchedule(int id)
+        [HttpPost("saveDB")]
+        public async Task<ActionResult<ExamSchedule>> SaveScheduleDB([FromBody] List<ExamSchedule> examSchedules)
         {
-            if (_context.ExamSchedule == null)
+            if (examSchedules == null)
             {
-                return NotFound();
+                return Problem("Entity set 'LoonsTimetableContext.ExamSchedule'  is null.");
             }
-            var examSchedule = await _context.ExamSchedule.FindAsync(id);
-            if (examSchedule == null)
-            {
-                return NotFound();
-            }
+            await _service.SaveToDB(examSchedules);
 
-            _context.ExamSchedule.Remove(examSchedule);
-            await _context.SaveChangesAsync();
 
-            return NoContent();
+            
+            return Ok(examSchedules);
+
+            
         }
+
+        // DELETE: api/ExamSchedules/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteExamSchedule(int id)
+        //{
+        //    if (_context.ExamSchedule == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var examSchedule = await _context.ExamSchedule.FindAsync(id);
+        //    if (examSchedule == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.ExamSchedule.Remove(examSchedule);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
 
         private bool ExamScheduleExists(int id)
         {
